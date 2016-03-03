@@ -75,8 +75,15 @@ class HttpTransport(Transport):
             request.headers.update(u2request.headers)
             log.debug('sending:\n%s', request)
             fp = self.u2open(u2request)
+
+            content = fp.read()
+
+            start = content.find('<s:Envelope')
+            end = content.find('</s:Envelope>') + len('</s:Envelope>')
+            content = content[start:end]
+
             self.getcookies(fp, u2request)
-            result = Reply(200, fp.headers.dict, fp.read())
+            result = Reply(200, fp.headers.dict, content)
             log.debug('received:\n%s', result)
         except u2.HTTPError, e:
             if e.code in (202,204):
