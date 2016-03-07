@@ -696,6 +696,11 @@ class SoapClient:
         """
         status, reason = (error.httpcode, tostr(error))
         reply = error.fp.read()
+
+        start = reply.find('<s:Envelope')
+        end = reply.find('</s:Envelope>') + len('</s:Envelope>')
+        reply = reply[start:end]
+
         log.debug('http failed:\n%s', reply)
         if status == 500:
             if len(reply) > 0:
